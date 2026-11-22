@@ -1,6 +1,6 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 
-const PHONE_NUMBER = '923001234567'; // <-- Yahan apna number likho, + ke baghair
+const PHONE_NUMBER = '923326954919';
 
 const client = new Client({
     authStrategy: new LocalAuth(),
@@ -20,8 +20,15 @@ const client = new Client({
     }
 });
 
-client.on('qr', (qr) => {
-    console.log('QR RECEIVED');
+client.on('qr', async (qr) => {
+    console.log('WhatsApp khul gaya, ab Pairing Code bana raha hun...');
+    try {
+        const code = await client.requestPairingCode(PHONE_NUMBER);
+        console.log('PAIRING CODE: ' + code);
+        console.log('Ye code is number wale WhatsApp me dalo: ' + PHONE_NUMBER);
+    } catch (err) {
+        console.log('Pairing Error: ' + err);
+    }
 });
 
 client.on('ready', () => {
@@ -78,7 +85,7 @@ client.on('message', async (msg) => {
         return;
     }
     if (text === '3' || text.includes('timing') || text.includes('location')) {
-        msg.reply('🕒 *Timings:* 12 PM - 12 AM\n📍 *Location:* Main Bazaar, Lahore\n📞 *Phone:* 0300-1234567');
+        msg.reply('🕒 *Timings:* 12 PM - 12 AM\n📍 *Location:* Main Bazaar, Lahore\n📞 *Phone:* 0349-1404543');
         return;
     }
     if (text.startsWith('order')) {
@@ -93,14 +100,3 @@ client.on('message', async (msg) => {
 
 console.log('Starting Restaurant Bot...');
 client.initialize();
-
-// Pairing Code - 10 second baad mangwayega
-setTimeout(async () => {
-    try {
-        const code = await client.requestPairingCode(PHONE_NUMBER);
-        console.log('PAIRING CODE: ' + code);
-        console.log('Is code ko WhatsApp me dalo: ' + PHONE_NUMBER);
-    } catch (err) {
-        console.log('Pairing Code Error: ' + err);
-    }
-}, 10000);
